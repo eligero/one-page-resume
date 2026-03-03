@@ -1,0 +1,14 @@
+[metadata]
+  title = "Resume title"
+  author = "Resume author"
+  description = "Resume description"
+  keywords = "k1, k2, k3, k4, k5"
+
+[header]
+  profile = ["src/assets/images/profile.jpg"] # or text profile summary
+  #profile = "My profile summary"
+  
+  [header.name]
+    name = "Name Middle Last"
+	role = "Role"
+	location = "Earth, Solar System"
