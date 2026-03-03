@@ -10,10 +10,12 @@
   )
 
 	set text(lang: setup.language)
+  set par(justify: true)
+
   set page(
     paper: setup.paper,
     margin: setup.margins,
-    background: context [
+    background: context if counter(page).get().first() == 1 [
       #place(
         bottom + left, 
         rect(
