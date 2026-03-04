@@ -1,13 +1,12 @@
-#import "./helpers.typ": get-colors, get-setup, get-accent-specs, get-metadata
-#import "./document-setup.typ": page-setup
+#import "./utils/setters.typ": setters
+#import "./utils/helpers.typ": parse-data
 
 #let resume(configuration, data, doc) = {
-  let colors = get-colors(configuration)
-  let setup = get-setup(configuration)
-  let accent-specs = get-accent-specs(configuration, data)
-  let metadata = get-metadata(data)
 
-  page-setup(colors, setup, accent-specs, metadata, doc)
+  let parsed-conf = parse-data(toml("./utils/configuration.toml"), configuration)
+  let parsed-data = parse-data(toml("./utils/data.toml"), data)
+
+  show: setters.with(parsed-conf, parsed-data)
   
   doc
 }

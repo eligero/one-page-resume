@@ -1,0 +1,36 @@
+[metadata]
+title = "Resume title"
+author = "Resume author"
+description = "Resume description"
+keywords = "k1, k2, k3, k4, k5"
+
+[header]
+name = "Name Middle Last"
+role = "Role"
+location = "Earth, Solar System"
+profile-img = "template/assets/images/profile.jpg"
+profile-text = "My profile summary"
+line_1 = [
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+]
+line_2 = [
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+]
+
+[[accent-column]]
+type = {entry = "simple", drop_cap = true}
+heading = ""
+text = ""
+
+[[main-column]]
+type = {entry = "simple", drop_cap = true}
+heading = ""
+text = ""

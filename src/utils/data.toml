@@ -1,0 +1,37 @@
+[metadata]
+title = ""
+author = ""
+description = ""
+keywords = ""
+
+[header]
+name = "Name Middle Last"
+role = "Role"
+location = "Earth, Solar System"
+profile-img = ""
+profile-text = "My profile summary"
+line_1 = [
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+]
+line_2 = [
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+  {icon = "", text = "", link = ""},
+]
+
+[[accent-column]]
+type = {entry = "simple", drop_cap = true}
+heading = ""
+text = ""
+
+[[main-column]]
+type = {entry = "simple", drop_cap = true}
+heading = ""
+text = ""
+
