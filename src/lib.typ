@@ -1,5 +1,8 @@
 #import "./utils/setters.typ": setters
 #import "./utils/helpers.typ": parse-data
+#import "./header.typ": header
+#import "./accent-column.typ": accent-column
+#import "./main-column.typ": main-column
 
 #let resume(configuration, data, doc) = {
 
@@ -8,5 +11,29 @@
 
   show: setters.with(parsed-conf, parsed-data)
   
+  let page_width = 100% + parsed-conf.page.margins.left + parsed-conf.page.margins.right
+  
+  header(parsed-conf, parsed-data)
+  
+  grid(
+    columns: (
+      page_width * parsed-conf.accent-column.width - parsed-conf.page.margins.left,
+      page_width - (page_width * parsed-conf.accent-column.width) - parsed-conf.page.margins.right,
+    ),
+    inset: 0pt,
+    stroke: 2pt + red,
+    column-gutter: 0%,
+    grid.cell(
+      inset: (right: parsed-conf.page.margins.right),
+      breakable: true,
+      accent-column(parsed-conf, parsed-data)
+    ),
+    grid.cell(
+      inset: (left: parsed-conf.page.margins.left),
+      breakable: true,
+      main-column(parsed-conf, parsed-data)
+	  )
+  )
+
   doc
 }

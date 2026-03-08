@@ -79,9 +79,8 @@
 #let setters(configuration, data, doc) = {
 	set document(..(get-document-conf(data)))
   set page(..(get-page-conf(configuration, data)))
-
-	//set text(..(get-text-conf(configuration)))
-  //set par(justify: true)
+  set par(spacing: 0pt, justify: true)
+  set text(lang: configuration.page.language, hyphenate: false)
 
 	doc
 }

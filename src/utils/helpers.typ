@@ -1,3 +1,5 @@
+#import "@preview/fontawesome:0.6.0": *
+
 #let parse-length(s) = {
   if s.ends-with("cm") {
     float(s.slice(0, -2)) * 1cm
@@ -51,3 +53,17 @@
   }
   default
 }
+
+#let fa-icon-box(source, size-to: "q", alignment: "horizon") = context {
+    let text-bounds = measure(text(top-edge: "cap-height", size-to)).height
+    let bottom-shift = measure(text(bottom-edge: "descender", size-to)).height -  measure(text(bottom-edge: "baseline", size-to)).height
+    let img = fa-icon(source, size: text-bounds)
+    let shift = if alignment == "horizon" {
+      bottom-shift
+    } else {// "bottom"
+      bottom-shift/2
+    }
+    return box(img, inset: (top: 0pt, bottom: shift))
+    }
+}
+

@@ -5,10 +5,10 @@ margins = {left = "1cm", top = "1cm", right = "1cm", bottom = "1cm"}
 colors = {accent = "#0395DE", dark = "#212529", light = "#F2F2F2"}
 
 [header]
-name = {font = "arial", size = "32pt"}
-role = {font = "arial", role_size = "18pt", loc_size = "10pt"}
-profile-text = {font = "arial", size = "18pt"}
-line-icons = {font = "arial", size = "10pt", y-offset = "10mm"}
+name = {font = "arial", size = "28pt"}
+role = {font = "arial", role_size = "18pt", loc_size = "12pt"}
+profile-text = {font = "arial", size = "10pt"}
+line-icons = {font = "arial", size = "10pt"}
 
 [header.corner]
 size = {width = "30%", height = "16%", y-offset = "3mm"}
