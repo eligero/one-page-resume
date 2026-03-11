@@ -1,28 +1,29 @@
 [metadata]
-title = "Resume title"
-author = "Resume author"
-description = "Resume description"
-keywords = "k1, k2, k3, k4, k5"
+title = "Resume - Elon Musk Fake"
+author = "Elon Musk Fake"
+description = "Professional resume for Elon Musk, technologist and entrepreneur."
+keywords = "Engineering, SpaceX, Tesla, Aerospace, Robotics"
 
 [header]
-name = "Name Middle Last"
-role = "Role"
+name = "Elon Musk"
+role = "Chief Engineer & CEO"
 location = "Earth, Solar System"
-profile-img = "template/assets/images/profile.jpg"
-profile-text = "My profile summary"
+profile-img = "template/assets/images/elonmusk.jpg"
+profile-text = "Lead engineer focused on first-principles design. Scaling interplanetary travel at SpaceX, accelerating sustainable energy at Tesla, and developing high-bandwidth neural interfaces to preserve human consciousness."
+
 line_1 = [
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
+  {icon = "fa-phone", text = "+1 (310) 363-6000", link = ""},
+  {icon = "fa-envelope", text = "elon@spacex.com", link = "mailto:hola@domain.tld"},
+  {icon = "fa-linkedin", text = "elonmusk", link = "https://linkedin.com/in/elonmusk"},
+  {icon = "fa-square-github", text = "elonmusk", link = "https://github.com/elonmusk"},
+  {icon = "fa-square-x-twitter", text = "elonmusk", link = "https://x.com/elonmusk"},
 ]
+
 line_2 = [
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
+  {icon = "custom-template/assets/logos/credly.svg", text = "Credly", link = "https://www.credly.com/users/nickname"},
+  {icon = "si-googlecloud", text = "GCP Skills", link = "https://www.skills.google/public_profiles/hash"},
+  {icon = "fa-aws", text = "AWS Skills", link = "https://skillbuilder.aws/id"},
+  {icon = "fa-gears", text = "Portfolio", link = "https://tesla.com/elon-musk"},
 ]
 
 [[accent-column]]

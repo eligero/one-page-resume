@@ -7,8 +7,11 @@
     top + right, 
     rect(
       fill: conf.page.colors.accent,
-			width: conf.header.corner.size.width,
-			height: conf.header.corner.size.height + conf.header.corner.size.y-offset,
+      width: conf.header.corner.size.width,
+      height: (
+        conf.header.corner.size.height
+        + conf.header.corner.size.y-offset
+      ),
       radius: conf.header.corner.radius,
     )
   )
@@ -16,22 +19,22 @@
 
 #let page-background-accent-image(conf, data) = {
   if data.header.profile-img.len() > 0 {
-		place(
+    place(
       top + right,
-			dx: - conf.header.corner.size.width / 4,
-			dy: (
+      dx: - conf.header.corner.size.width / 4,
+      dy: (
         (conf.header.corner.size.height + conf.header.corner.size.y-offset) / 2
         - (page.width * conf.header.corner.size.width / 4)
       ),
       shadow(
-				blur: conf.header.image.blur, 
+        blur: conf.header.image.blur, 
         fill: conf.page.colors.light,
-				radius: conf.header.image.radius,
-			)[
+        radius: conf.header.image.radius,
+      )[
         #box(
           clip: true,
-					stroke: conf.header.image.stroke + conf.page.colors.light, 
-					radius: conf.header.image.radius,
+          stroke: conf.header.image.stroke + conf.page.colors.light, 
+          radius: conf.header.image.radius,
           width: conf.header.corner.size.width / 2,
           image(
             "/" + data.header.profile-img,
@@ -49,9 +52,9 @@
     bottom + left, 
     rect(
       fill: conf.page.colors.accent,
-			width: conf.accent-column.width,
-			height: 100% - conf.header.corner.size.height,
-			radius: conf.accent-column.radius,
+      width: conf.accent-column.width,
+      height: 100% - conf.header.corner.size.height,
+      radius: conf.accent-column.radius,
     )
   )
 }
@@ -76,11 +79,14 @@
   date: datetime.today(),
 )
 
-#let setters(configuration, data, doc) = {
-	set document(..(get-document-conf(data)))
+#let setters(configuration, data, doc, debug: false) = {
+  set document(..(get-document-conf(data)))
   set page(..(get-page-conf(configuration, data)))
   set par(spacing: 0pt, justify: true)
   set text(lang: configuration.page.language, hyphenate: false)
+  
+  set grid(stroke: if debug {2pt + yellow} else {none})
+  set table(stroke: if debug {1pt} else {none})
 
-	doc
+  doc
 }

@@ -9,7 +9,7 @@
   let parsed-conf = parse-data(toml("./utils/configuration.toml"), configuration)
   let parsed-data = parse-data(toml("./utils/data.toml"), data)
 
-  show: setters.with(parsed-conf, parsed-data)
+  show: setters.with(parsed-conf, parsed-data, debug: false)
   
   let page_width = 100% + parsed-conf.page.margins.left + parsed-conf.page.margins.right
   
@@ -21,7 +21,6 @@
       page_width - (page_width * parsed-conf.accent-column.width) - parsed-conf.page.margins.right,
     ),
     inset: 0pt,
-    stroke: 2pt + red,
     column-gutter: 0%,
     grid.cell(
       inset: (right: parsed-conf.page.margins.right),
@@ -32,7 +31,7 @@
       inset: (left: parsed-conf.page.margins.left),
       breakable: true,
       main-column(parsed-conf, parsed-data)
-	  )
+    )
   )
 
   doc

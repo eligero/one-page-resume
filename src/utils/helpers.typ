@@ -1,4 +1,5 @@
 #import "@preview/fontawesome:0.6.0": *
+#import "@preview/sicons:16.0.0": *
 
 #let parse-length(s) = {
   if s.ends-with("cm") {
@@ -12,7 +13,7 @@
   } else if s.ends-with("em") {
     float(s.slice(0, -2)) * 1em
   } else if s.ends-with("%") {
-		float(s.slice(0, -1)) * 1%
+    float(s.slice(0, -1)) * 1%
   } else {
     panic("Unsupported unit in string: " + s)
   }
@@ -20,7 +21,9 @@
 
 #let unit-parser(default, data) = {
   let length-pattern = regex("^-?\d+(\.\d+)?(pt|mm|cm|in|em|%)$")
-  let color-pattern = regex("^#([a-fA-F0-9]{3}|[a-fA-F0-9]{4}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$")
+  let color-pattern = regex(
+    "^#([a-fA-F0-9]{3}|[a-fA-F0-9]{4}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$"
+  )
   
   if default.match(length-pattern) != none {
     if data.match(length-pattern) != none{
@@ -44,8 +47,31 @@
     if data.keys().contains(k) {
       if type(v) == dictionary {
         default.at(k) = parse-data(default.at(k), data.at(k))
-      } else if type(v) == array {
-        // TODO
+      } else if type(v) == array and str(k).match(regex("line_[12]")) != none {
+        if data.at(k) == () {
+          default.at(k) = ()
+        } else if default.at(k).len() > data.at(k).len() {
+          continue
+        } else {
+          for i in range(data.at(k).len()){
+            if data.at(k).at(i).keys() != ("icon", "text", "link"){
+              continue
+            }
+            if data.at(k).at(i).values().all(item => {type(item) == str}) == false {
+              continue
+            }
+
+            if data.at(k).at(i).at("icon").match(regex("^(fa|si|custom)-")) == none {
+              data.at(k).at(i).at("icon") = "fa-xmark"
+            }
+
+            if i > default.at(k).len() - 1 {
+              default.at(k).push(data.at(k).at(i))
+            } else {
+              default.at(k).at(i) = data.at(k).at(i)
+            }            
+          }
+        }    
       } else {
         default.at(k) = unit-parser(v, data.at(k))
       }
@@ -54,16 +80,31 @@
   default
 }
 
-#let fa-icon-box(source, size-to: "q", alignment: "horizon") = context {
-    let text-bounds = measure(text(top-edge: "cap-height", size-to)).height
-    let bottom-shift = measure(text(bottom-edge: "descender", size-to)).height -  measure(text(bottom-edge: "baseline", size-to)).height
-    let img = fa-icon(source, size: text-bounds)
-    let shift = if alignment == "horizon" {
-      bottom-shift
-    } else {// "bottom"
-      bottom-shift/2
+#let icon-parser(icon, size: 1em, color: black) = {
+  let prefix = icon.match(regex("^(fa|si|custom)-")).text
+  let _icon = icon.replace(regex("^(fa|si|custom)-"), it => "")
+
+  let img = {
+    if prefix == "fa-" {
+      fa-icon(_icon, size: size, fill: color)
+    } else if prefix == "si-" {
+      sicon(slug: _icon, size: 87.5%*size, icon-color: color.to-hex())
     }
-    return box(img, inset: (top: 0pt, bottom: shift))
+    else { //custom
+      image(
+        bytes(
+          read("/" + _icon)
+          .replace("#000000", color.to-hex())
+        ),
+        height: 87.5%*size,
+      )
     }
+  }
+    
+  if prefix == "fa-" {
+    return text(img, bottom-edge: -25%*size)
+  } else{
+    return text(img)
+  }
 }
 

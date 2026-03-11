@@ -8,30 +8,23 @@ keywords = ""
 name = "Name Middle Last"
 role = "Role"
 location = "Earth, Solar System"
-profile-img = ""
+profile-img = "template/assets/images/elonmusk.jpg"
 profile-text = "My profile summary"
 line_1 = [
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
+  {icon = "fa-phone", text = "+00 000 000 000", link = ""},
+  {icon = "fa-envelope", text = "hola@domain.tld", link = "mailto:hola:domain.tld"},
 ]
 line_2 = [
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
-  {icon = "", text = "", link = ""},
+  {icon = "fa-gears", text = "Portfolio", link = "https://domain.tld/Portfolio"},
 ]
 
-[[accent-column]]
-type = {entry = "simple", drop_cap = true}
-heading = ""
-text = ""
+#[[accent-column]]
+#type = {entry = "simple", drop_cap = true}
+#heading = ""
+#text = ""
 
-[[main-column]]
-type = {entry = "simple", drop_cap = true}
-heading = ""
-text = ""
+#[[main-column]]
+#type = {entry = "simple", drop_cap = true}
+#heading = ""
+#text = ""
 
