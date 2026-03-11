@@ -1,6 +1,6 @@
 #let accent-column(conf, data) = {
-	table(
-		columns: 100%,
-		[#lorem(183)]
-	)
+  table(
+    columns: 100%,
+    [#lorem(183)]
+  )
 }

@@ -5,5 +5,5 @@
 
 #show: resume.with(
   configuration,
-	data
+  data
 )
