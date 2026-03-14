@@ -39,7 +39,7 @@
   
   for i in data { 
     show heading: it => {
-      set block(above: 1em, below: 0.8em)
+      set block(above: 1.2em, below: 1em)
       if i.hide-heading == false { it }
     }
 
