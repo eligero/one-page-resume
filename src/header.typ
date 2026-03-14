@@ -1,4 +1,4 @@
-#import "./utils/helpers.typ": icon-parser
+#import "./entries/helpers.typ": icon-parser
 
 #let table_name(conf, data) = {
   set text(

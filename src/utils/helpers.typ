@@ -43,6 +43,8 @@
 }
 
 #let parse-data(default, data) = {  
+  let _entries = toml("./entries.toml")
+
   for (k,v) in default {
     if data.keys().contains(k) {
       if type(v) == dictionary {
@@ -71,7 +73,24 @@
               default.at(k).at(i) = data.at(k).at(i)
             }            
           }
-        }    
+        }
+      } else if type(v) == array and str(k) in ("accent-column", "main-column") {
+        for i in range(data.at(k).len()){
+          if data.at(k).at(i).keys().contains("entry") == false or data.at(k).at(i).entry not in _entries.entries.keys() {
+            continue
+          }
+
+          if data.at(k).at(i).keys() != _entries.entries.at(data.at(k).at(i).entry).keys() {
+            continue
+          }
+
+          if default.at(k).at(0) == (:) {
+            default.at(k).at(0) = data.at(k).at(i)
+          } else {
+            default.at(k).push(data.at(k).at(i))
+          }
+
+        }
       } else {
         default.at(k) = unit-parser(v, data.at(k))
       }
@@ -79,32 +98,3 @@
   }
   default
 }
-
-#let icon-parser(icon, size: 1em, color: black) = {
-  let prefix = icon.match(regex("^(fa|si|custom)-")).text
-  let _icon = icon.replace(regex("^(fa|si|custom)-"), it => "")
-
-  let img = {
-    if prefix == "fa-" {
-      fa-icon(_icon, size: size, fill: color)
-    } else if prefix == "si-" {
-      sicon(slug: _icon, size: 87.5%*size, icon-color: color.to-hex())
-    }
-    else { //custom
-      image(
-        bytes(
-          read("/" + _icon)
-          .replace("#000000", color.to-hex())
-        ),
-        height: 87.5%*size,
-      )
-    }
-  }
-    
-  if prefix == "fa-" {
-    return text(img, bottom-edge: -25%*size)
-  } else{
-    return text(img)
-  }
-}
-
