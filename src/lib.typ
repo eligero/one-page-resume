@@ -1,8 +1,7 @@
 #import "./utils/setters.typ": setters
 #import "./utils/helpers.typ": parse-data
 #import "./header.typ": header
-#import "./accent-column.typ": accent-column
-#import "./main-column.typ": main-column
+#import "content.typ": contents
 
 #let resume(configuration, data, doc) = {
 
@@ -25,12 +24,12 @@
     grid.cell(
       inset: (right: parsed-conf.page.margins.right),
       breakable: true,
-      accent-column(parsed-conf, parsed-data)
+      contents(parsed-conf, parsed-data.accent-column, content: "accent-column")
     ),
     grid.cell(
       inset: (left: parsed-conf.page.margins.left),
       breakable: true,
-      main-column(parsed-conf, parsed-data)
+      contents(parsed-conf, parsed-data.main-column, content: "main-column")
     )
   )
 

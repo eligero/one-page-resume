@@ -18,13 +18,6 @@ line_2 = [
   {icon = "fa-gears", text = "Portfolio", link = "https://domain.tld/Portfolio"},
 ]
 
-#[[accent-column]]
-#type = {entry = "simple", drop_cap = true}
-#heading = ""
-#text = ""
+[[accent-column]]
 
-#[[main-column]]
-#type = {entry = "simple", drop_cap = true}
-#heading = ""
-#text = ""
-
+[[main-column]]

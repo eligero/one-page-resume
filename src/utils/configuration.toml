@@ -22,7 +22,7 @@ radius = {bottom-left = "50%", top-left = "50%", top-right = "50%", bottom-right
 [accent-column]
 width = "35%"
 radius = {bottom-left = "0%", top-left = "0%", top-right = "20%", bottom-right = "0%"}
-text = {font="arial", head_size="", body_size=""}
+text = {font="arial", head-size="12pt", body-size="10pt"}
 
 [main-column]
-text = {font="arial", head_size="", body_size=""}
+text = {font="arial", head-size="12pt", body-size="10pt"}
