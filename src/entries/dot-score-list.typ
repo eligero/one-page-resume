@@ -1,6 +1,6 @@
 #let dot-rating(rating, colors, max-rating: 5) = {
   let active-color = colors.accent
-  let inactive-color = colors.dark.darken(20%)
+  let inactive-color = colors.light.darken(20%)
     box(
 			stack(
 				dir: ltr, spacing: 0.25em,
