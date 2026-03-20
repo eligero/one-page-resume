@@ -52,8 +52,8 @@
       ),
       icon-parser(
         "fa-location-dot",
-        size: size_corrector * conf.header.role.loc_size,
-        color: conf.page.colors.accent
+        size_corrector * conf.header.role.loc_size,
+        fill-color: conf.page.colors.accent
       )
     ),
     table.cell(
@@ -90,8 +90,8 @@
         inset:(left: 0pt, right: 0pt),
         icon-parser(
           i.icon,
-          size: conf.header.line-icons.size,
-          color: conf.page.colors.accent
+          conf.header.line-icons.size,
+          fill-color: conf.page.colors.accent
         )
       ),
       table.cell(

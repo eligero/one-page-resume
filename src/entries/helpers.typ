@@ -31,30 +31,64 @@
   ))
 }
 
-#let icon-parser(icon, size: 1em, color: black) = {
+#let cu-icon(path, size, fill-color) = {
+  let file-format = lower(path.split(".").last())
+
+  if file-format == "svg" and fill-color != false {
+    let black-regex = regex(
+      "fill:\s*(#000000|#000|rgb\(\s*0\s*,\s*0\s*,\s*0\s*\))"
+    )
+    return image(
+      bytes(
+        read("/" + path)
+        .replace(
+          black-regex,
+          "fill:" + fill-color.to-hex()
+        )
+      ),
+      width: size,
+    )
+  } else {
+    return box(clip: true, radius: 25%, image("/" + path, width: size))
+  }
+}
+
+#let icon-parser(icon, size, fill-color: false, inline: true) = {
+
   let prefix = icon.match(regex("^(fa|si|custom)-")).text
   let _icon = icon.replace(regex("^(fa|si|custom)-"), it => "")
 
-  let img = {
-    if prefix == "fa-" {
-      fa-icon(_icon, size: size, fill: color)
-    } else if prefix == "si-" {
-      sicon(slug: _icon, size: 87.5%*size, icon-color: color.to-hex())
-    }
-    else { //custom
-      image(
-        bytes(
-          read("/" + _icon)
-          .replace("#000000", color.to-hex())
-        ),
-        height: 87.5%*size,
-      )
-    }
-  }
+  let sizes = (
+    fa: size,
+    si: if inline {size * 87.5%} else {size * 125%},
+    cu: if inline {size * 87.5%} else {size * 125%},
+  )
     
   if prefix == "fa-" {
-    return text(img, bottom-edge: -25%*size)
-  } else{
-    return text(img)
+    return text(
+      fa-icon(_icon, size: sizes.fa, fill: fill-color),
+      bottom-edge: -25% * size
+    )
+  } else if prefix == "si-" {
+    return sicon(slug: _icon, size: sizes.si, icon-color: fill-color.to-hex())
   }
+  else{ // custom
+    return cu-icon(_icon, sizes.cu, fill-color)
+  }
+}
+
+#let type-tag(tag, size, background-color, text-color) = {
+  box(
+    fill: background-color.transparentize(50%),
+    inset: (x: 0.25em, y: 0.05em),
+    outset: (y: 0.2em),
+    radius: 25%,
+    baseline: 25%,
+    text(
+      weight: "regular",
+      size: size,
+      fill: text-color,
+      raw(tag)
+    )
+  )
 }
