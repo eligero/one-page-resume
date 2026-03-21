@@ -3,6 +3,7 @@
 #import "./dot-score-list.typ": dot-score-list
 #import "./bar-percent-list.typ": bar-percent-list
 #import "./tag-by-topic.typ": tag-by-topic
+#import "./dynamic-columns.typ": dynamic-columns
 #import "./helpers.typ": accent-heading, light-heading
 
 #let entries = (
@@ -11,6 +12,7 @@
   "dot-score-list": dot-score-list,
   "bar-percent-list": bar-percent-list,
   "tag-by-topic": tag-by-topic,
+  "dynamic-columns": dynamic-columns
 )
 
 #let _colors(conf, content) = {
