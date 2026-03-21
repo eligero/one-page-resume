@@ -21,7 +21,7 @@
 }
 
 #let bar-percent-list(conf, data) = {
-  table(
+  v(0.25em) + table(
     align: horizon,
     columns: (auto, 2fr),
     column-gutter: 0.75em,
