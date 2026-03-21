@@ -10,7 +10,7 @@
       }
     }
 
-    table(
+    v(0.25em) + table(
       align: horizon,
       columns: _columns,
       column-gutter: 0.75em,
@@ -32,8 +32,6 @@
           _tags.push(type-tag(
             j.trim(),
             conf.text.body-size,
-            conf.colors.accent,
-            conf.colors.light
           ))
         }
         
