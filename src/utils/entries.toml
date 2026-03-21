@@ -2,6 +2,6 @@
 simple = { entry = "simple", heading = "Simple Heading", text = "Simple Text", hide-heading = false }
 icon-list = { entry = "icon-list", heading = "Icon list Heading", hide-heading = false, list = [ { icon = "fa-bar", head = "Head", text = "Text"}, {icon = "fa-bar", head = "Head", text = "Text" } ] }
 dot-score-list = { entry = "dot-score-list", heading = "Dot Score List Heading", hide-heading = false, hide-alt = false, list = [ { text = "text", alt = "alt-text", rating = 2}, { text = "text", alt = "alt-text", rating = 4} ] }
-bar-percent-list = { entry = "bar-percent-list", heading = "Bar Percent List Heading", hide-heading = false, list = [ { text = "text", percent = 30}, { text = "text", percent = 90} ] }
+bar-percent-list = { entry = "bar-percent-list", heading = "Bar Percent List Heading", hide-heading = false, ranges = ["Beginner", "Intermediate", "Advanced", "Proficient", "Expert"], list = [ { text = "text", percent = 30}, { text = "text", percent = 90} ] }
 tag-by-topic = { entry = "tag-by-topic", heading = "Tag By Topic Heading", hide-heading = false, list = [ { topic = "text", tags = "a,b,c,d,e,f"}, { topic = "text", tags = "a,b,c,d,e,f"} ] }
 dynamic-columns = { entry = "dynamic-columns", heading = "head", hide-heading = false, date-format = "FULL", list = [] }

@@ -1,48 +1,75 @@
 #let bar-percent(percent, colors) = {
-  let tag = if percent >= 81 { "Expert" }
-            else if percent >= 61 { "Proficient" }
-            else if percent >= 41 { "Advanced" }
-            else if percent >= 21 { "Intermediate" }
-            else { "Beginner" }
- 
-  let _tag = box(width: 0pt, text(tag, fill: white.transparentize(100%)))
-
   let active-color = colors.accent
   let inactive-color = colors.light.darken(20%)
 
-  let _bar = box(stack(
+  let _bar = stack(
       dir: rtl,
       spacing: -5%,
-      rect(width: 100% + 5% - percent * 1%, height: 0.4em, fill: inactive-color, radius: (right: 50%)),
-      rect(width: percent * 1%, height: 0.4em, fill: active-color, radius: 50%),
-    ))  + linebreak()
+      rect(
+        width: 100% + 5% - percent * 1%,
+        height: 0.4em,
+        fill: inactive-color,
+        radius: (right: 50%)
+      ),
 
-  _tag + _bar
+      rect(
+        width: percent * 1%,
+        height: 0.4em,
+        fill: active-color, radius: 50%
+      ),
+    )
+
+  _bar
 }
 
 #let bar-percent-list(conf, data) = {
-  v(0.25em) + table(
-    align: horizon,
-    columns: (auto, 2fr),
-    column-gutter: 0.75em,
-    row-gutter: 0.75em,
-    inset: 0pt,
-    ..for i in data.list {
-      let _head = table.cell(
+  for i in data.list {
+    let tag = if i.percent >= 81 {
+      data.ranges.last()
+    } else if i.percent >= 61 {
+      data.ranges.at(-2)
+    } else if i.percent >= 41 {
+      data.ranges.at(-3)
+    } else if i.percent >= 21 {
+      data.ranges.at(-4)
+    } else {
+      data.ranges.first()
+    }
+
+    let _head = text(
+        weight: "bold",
+        size: conf.text.body-size,
+        font: conf.text.font,
+        fill: conf.colors.accent,
+        i.text
+      ) + box(
+        width: 0pt,
         text(
-          weight: "bold",
+          ":",
+          fill: white.transparentize(100%),
           size: conf.text.body-size,
-          font: conf.text.font,
-          fill: conf.colors.accent,
-          i.text
+          font: conf.text.font
         )
       )
         
-      let _percent = table.cell(
-        bar-percent(i.percent, conf.colors)
-      )
+    let _percent =  (
+      box(
+        width: 0pt,
+        text(
+          tag + ", ",
+          fill: white.transparentize(100%),
+          size: conf.text.body-size,
+          font: conf.text.font
+        )
+      ) + box(bar-percent(i.percent, conf.colors))
+    )
+      
+    if i !=data.list.first() { v(.5em) }
 
-      (_head, _percent)
-    }
-  )
+    block(
+      box(width: 1fr, _head)
+      + h(0.75em)
+      + box(width: 2fr, _percent)
+    )
+  }
 }
