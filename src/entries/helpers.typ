@@ -5,12 +5,14 @@
 #let accent-heading(conf, s) = {
   heading(
     text(
+      font: conf.text.font,
       size: conf.text.head-size,
       weight: "bold",
       fill: conf.colors.accent,
       s.slice(0, 3)
     ) +
     text(
+      font: conf.text.font,
       size: conf.text.head-size,
       weight: "bold",
       fill: conf.colors.dark,
@@ -20,15 +22,17 @@
 }
 
 #let light-heading(conf, s) = {
-  underline(offset: 0.3em, stroke: conf.colors.accent, heading(
+  heading(
     text(
-      weight: "bold",
       font: conf.text.font,
       size: conf.text.head-size,
+      weight: "bold",
       fill: conf.colors.accent,
-      s
-    )
-  ))
+      //fill: white.transparentize(100%),
+      //stroke: 0.25pt + conf.colors.accent,
+      //$because$ + " " +
+      smallcaps(s)
+    ))
 }
 
 #let cu-icon(path, size, fill-color) = {
@@ -65,10 +69,14 @@
   )
     
   if prefix == "fa-" {
-    return text(
-      fa-icon(_icon, size: sizes.fa, fill: fill-color),
-      bottom-edge: -25% * size
-    )
+    if inline {
+      return fa-icon(_icon, size: sizes.fa, fill: fill-color)
+    } else {
+      return text(
+        fa-icon(_icon, size: sizes.fa, fill: fill-color),
+        bottom-edge: -25% * size
+      )
+    }
   } else if prefix == "si-" {
     return sicon(slug: _icon, size: sizes.si, icon-color: fill-color.to-hex())
   }
@@ -77,9 +85,9 @@
   }
 }
 
-#let type-tag(tag, size, background-color, text-color) = {
+#let type-tag(tag, size) = {
   box(
-    fill: background-color.transparentize(50%),
+    fill: luma(240).transparentize(50%),
     inset: (x: 0.25em, y: 0.05em),
     outset: (y: 0.2em),
     radius: 25%,
@@ -87,7 +95,7 @@
     text(
       weight: "regular",
       size: size,
-      fill: text-color,
+      fill: luma(100),
       raw(tag)
     )
   )

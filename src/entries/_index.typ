@@ -1,16 +1,16 @@
-#import "entries/simple.typ": simple
-#import "entries/icon-list.typ": icon-list
-#import "entries/dot-score-list.typ": dot-score-list
-#import "entries/bar-percent-list.typ": bar-percent-list
-#import "entries/tag-by-topic.typ": tag-by-topic
-#import "entries/helpers.typ": accent-heading, light-heading
+#import "./simple.typ": simple
+#import "./icon-list.typ": icon-list
+#import "./dot-score-list.typ": dot-score-list
+#import "./bar-percent-list.typ": bar-percent-list
+#import "./tag-by-topic.typ": tag-by-topic
+#import "./helpers.typ": accent-heading, light-heading
 
 #let entries = (
   "simple": simple,
   "icon-list": icon-list,
   "dot-score-list": dot-score-list,
   "bar-percent-list": bar-percent-list,
-  "tag-by-topic": tag-by-topic
+  "tag-by-topic": tag-by-topic,
 )
 
 #let _colors(conf, content) = {
@@ -38,20 +38,20 @@
   set text(size: conf.at(content).text.body-size)
   
   for i in data { 
+    if i.len() == 0 { continue }
+    
     show heading: it => {
-      set block(above: 1.2em, below: 1em)
+      set block(above: 1em, below: 0.5em)
       if i.hide-heading == false { it }
     }
-
+  
     if i.heading.len() > 0 {
       (_heading(content))(
         conf.at(content),
         i.heading
       )
     }
-
-    //set par(leading:0pt, spacing:0pt)
-
+  
     entries.at(i.entry)(conf.at(content), i)
   }
 }

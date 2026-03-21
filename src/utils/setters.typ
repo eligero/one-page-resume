@@ -59,11 +59,13 @@
   )
 }
 
-#let page-background(conf, data) = context if counter(page).get().first() == 1 [
-  #page-background-top-corner(conf)
-  #page-background-accent-image(conf, data)
-  #page-background-accent-column(conf)
-]
+#let page-background(conf, data) = context {
+  if counter(page).get().first() == 1 {
+    page-background-top-corner(conf)
+    page-background-accent-image(conf, data)
+    page-background-accent-column(conf)
+  }
+}
 
 #let get-page-conf(conf, data) = (
   paper: conf.page.paper,
