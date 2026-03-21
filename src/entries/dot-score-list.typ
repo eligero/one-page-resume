@@ -17,7 +17,7 @@
 
   let columns = if data.hide-alt {2} else {3}
 
-  table(
+  v(0.25em) + table(
     columns: columns,
     column-gutter: 0.75em,
     row-gutter: 0.75em,
