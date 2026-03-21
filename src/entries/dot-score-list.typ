@@ -1,59 +1,115 @@
 #let dot-rating(rating, colors, max-rating: 5) = {
   let active-color = colors.accent
   let inactive-color = colors.light.darken(20%)
-    box(
-			stack(
-				dir: ltr, spacing: 0.25em,
-      ..range(max-rating).map(i => {
-        circle(
-          radius: 0.25em,
-          fill: if i < rating { active-color } else { inactive-color }
-        )
-      })
-    )) + linebreak()
+	
+  let _dot = stack(
+		dir: ltr,
+    spacing: 0.25em,
+    ..range(max-rating).map(i => {
+      circle(
+        radius: 0.25em,
+        fill: if i < rating { active-color } else { inactive-color }
+      )
+    })
+  )
+
+  _dot
 }
 
 #let dot-score-list(conf, data) = {
 
-  let columns = if data.hide-alt {2} else {3}
-
-  v(0.25em) + table(
-    columns: columns,
-    column-gutter: 0.75em,
-    row-gutter: 0.75em,
-    inset: 0pt,
-    ..for i in data.list {
-    let _head = table.cell(
-      text(
-        weight: "bold",
-        size: conf.text.body-size,
-        font: conf.text.font,
-        fill: conf.colors.accent,
-        i.text
-      )
-    )
-    
-    let _alt = table.cell(
-      text(
-        weight: "regular",
-        size: conf.text.body-size,
-        font: conf.text.font,
-        fill: conf.colors.dark, 
-        i.alt
-      )
-    )
-    
-    
-    let _score = table.cell(
-      if data.hide-alt {box(width: 0pt, text(i.alt, fill: white.transparentize(100%)))} + dot-rating(i.rating, conf.colors)
-    )
-
-    let _full = (_head, _score)
-    if data.hide-alt == false {_full.insert(2, _alt)}
-
-    _full
-    }
-
+  let _data = (
+    head: (
+      data: (),
+      width: (),
+    ),
+    alt: (
+      data: (),
+      width: (),
+    ),
+    score: (),
   )
-}
 
+  let _measure(body) = {
+    let size = measure(body)
+    size.width
+  }
+
+  for i in data.list {
+    _data.head.data.push(text(
+      weight: "bold",
+      size: conf.text.body-size,
+      font: conf.text.font,
+      fill: conf.colors.accent,
+      i.text
+    ) + box(
+      width: 0pt,
+      text(
+        ":",
+        fill: white.transparentize(100%),
+        size: conf.text.body-size,
+        font: conf.text.font
+      )
+    ))
+
+    _data.head.width.push(
+      _measure(_data.head.data.last())
+    )
+    
+    if not data.hide-alt {
+      _data.alt.data.push(
+        text(
+          weight: "regular",
+          size: conf.text.body-size,
+          font: conf.text.font,
+          fill: conf.colors.dark,
+          i.alt
+        ) + box(
+          width: 0pt,
+          text(
+            ", ",
+            fill: white.transparentize(100%),
+            size: conf.text.body-size,
+            font: conf.text.font
+          )
+        )
+      )
+      _data.alt.width.push(
+        _measure(_data.alt.data.last())
+      )
+    } else {
+      _data.alt.width.push(0pt)
+      _data.alt.data.push("")
+    }
+    
+    _data.score.push(
+      if data.hide-alt {
+        box(
+          width: 0pt,
+          text(
+            i.alt + ", ",
+            fill: white.transparentize(100%),
+            size: conf.text.body-size,
+            font: conf.text.font
+          )
+        ) + box(dot-rating(i.rating, conf.colors))
+      } else {
+        box(dot-rating(i.rating, conf.colors))
+      }
+    )
+  }
+
+  let head-width = calc.max(.._data.head.width)
+  let alt-width = calc.max(.._data.alt.width)
+
+  for i in range(_data.head.data.len()) {
+    block(
+      if i != 0 { v(0.5em) }
+      + box(width: head-width, _data.head.data.at(i))
+      + h(0.75em)
+      + box(width: alt-width, _data.alt.data.at(i))
+      + if not data.hide-alt {h(0.75em)}
+      + _data.score.at(i)
+    )
+  }
+}

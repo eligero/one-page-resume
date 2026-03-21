@@ -28,9 +28,6 @@
       size: conf.text.head-size,
       weight: "bold",
       fill: conf.colors.accent,
-      //fill: white.transparentize(100%),
-      //stroke: 0.25pt + conf.colors.accent,
-      //$because$ + " " +
       smallcaps(s)
     ))
 }

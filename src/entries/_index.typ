@@ -43,7 +43,7 @@
     if i.len() == 0 { continue }
     
     show heading: it => {
-      set block(above: 1em, below: 0.5em)
+      set block(above: 1em, below: 0.6em)
       if i.hide-heading == false { it }
     }
   
