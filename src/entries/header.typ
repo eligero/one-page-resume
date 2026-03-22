@@ -1,25 +1,30 @@
 #import "./helpers.typ": icon-parser
 
 #let _name(conf, data) = {
-  set text(
-    size: conf.header.name.size,
-    font: conf.header.name.font,
-    fill: conf.page.colors.dark
-  )
-
   let name_array = data.name.split()
   let name = name_array.first() + " "
   let surname = name_array.slice(1).join(" ")
 
-  name + strong(surname)
+  text(
+    weight: "regular",
+    size: conf.header.name.size,
+    font: conf.header.name.font,
+    fill: conf.page.colors.dark,
+    name
+  ) + text(
+    weight: "bold",
+    size: conf.header.name.size,
+    font: conf.header.name.font,
+    fill: conf.page.colors.dark,
+    surname
+  )
 }
 
-#let _role(conf, data) = {
-  set text(size: conf.header.role.loc_size, font: conf.header.role.font)
-  
+#let _role(conf, data) = {  
   let size_corrector = 75%
 
   let role = text(
+    font: conf.header.role.font,
     size: conf.header.role.role_size,
     weight: "bold",
     fill: conf.page.colors.accent, data.role
@@ -34,22 +39,36 @@
   ))
 
   let location = text(
+    size: conf.header.role.loc_size,
+    font: conf.header.role.font,
     fill: conf.page.colors.dark,
     weight: "regular",
     " " + data.location
   )
 
-  role + h(1em) +icon + location
+  role + text(
+    size: conf.header.role.loc_size,
+    font: conf.header.role.font,
+    fill: conf.page.colors.dark,
+    weight: "regular",
+    h(1em)
+  ) + icon + location
 }
 
 #let _line_icons(conf, data, line) = {
-  set text(
-    size: conf.header.line-icons.size,
-    fill: conf.page.colors.dark,
-    font: conf.header.line-icons.font
+  let _regex = (
+    email: (k: "email: ", re: regex("[\w\.-]+@[\w\.-]+\.\w+")),
+    linkedin: (k: "linkedin: ", re: regex("(?:https?://)?(?:www\.)?linkedin\.com/in/[\w-]+/?")),
+    github: (k: "github: ", re: regex("(?:https?://)?(?:www\.)?github\.com/[\w-]+/?")),
+    x: (k: "x: ", re: regex("(?:https?://)?(?:www\.)?(?:x|twitter)\.com/[\w-]+/?")),
+    default: (k: none, re:regex("(?:https?://|www\.)[^\s]+(?:\.[^\s]+)+"))
   )
 
-  let _line = ""
+  let _line = (
+    pdf: none,
+    ats: none
+  )
+  
   for i in data.at(line) {
     let icon = box(
       baseline: 12.5% * conf.header.line-icons.size,
@@ -59,40 +78,150 @@
         fill-color: conf.page.colors.accent
     ))
     
-    let _text = if i.link.len() > 0 { link(i.link, i.text) } else {i.text}
-    _line += icon + h(0.1em) + _text
+    let _text = {
+      if i.link.len() > 0 {
+        text(
+          size: conf.header.line-icons.size,
+          fill: conf.page.colors.dark,
+          font: conf.header.line-icons.font,
+          link(i.link, i.text)
+        )
+
+        for (k, v) in _regex {
+          if i.link.match(v.re) != none {
+            if v.k == none {
+              _line.ats += i.text + ": " + i.link + ";"
+            } else {
+              _line.ats += v.k + i.link + ";"
+            }
+            break
+          }
+        }
+      } else {
+        text(
+          size: conf.header.line-icons.size,
+          fill: conf.page.colors.dark,
+          font: conf.header.line-icons.font,
+          i.text
+        )
+      }
+    }
+
+    _line.pdf += icon + text(
+        size: conf.header.line-icons.size,
+        fill: conf.page.colors.dark,
+        font: conf.header.line-icons.font,
+        h(0.1em)
+      ) + _text
+
     if i != data.at(line).last() {
-      _line += h(0.6em)
+      _line.pdf += box(
+        width: 0pt,
+        text(
+          ", ",
+          size: conf.header.line-icons.size,
+          font: conf.header.line-icons.font,        
+          fill: white.transparentize(100%),
+        )
+      ) + text(
+        size: conf.header.line-icons.size,
+        fill: conf.page.colors.dark,
+        font: conf.header.line-icons.font,
+        h(0.5em)
+      )
     }
   }
+
   _line
 }
 
+#let ats-text-maker(s) = text(
+  fill: black.transparentize(100%),
+  size: 10pt,
+  font: "arial",
+  s
+)
+
 #let header(conf, data, width) = {
-  
   set par(leading: 0em, spacing: 0em)
+
+  let line_1 = _line_icons(conf, data, "line_1")
+  
+  let line_2 = {
+    if data.at("line_2").len() > 0 {
+      _line_icons(conf, data, "line_2")
+    } else {
+      none
+    }
+  }
   
   let name = block(
     width: width - conf.page.margins.right,
-    _name(conf, data),
+    _name(conf, data)
   )
   
-  let role = block(
-    width: width - conf.page.margins.right,
-    v(1em) + _role(conf, data) + v(0.75em)
-  )
-
-  let line_1 = block(
-    width: width - conf.page.margins.right,
-    _line_icons(conf, data, "line_1")
-  )
-
-  let line_2 =if data.at("line_2").len() > 0 {
+  let role = {    
     block(
       width: width - conf.page.margins.right,
-      v(0.5em) +_line_icons(conf, data, "line_2")
+      v(1em) + _role(conf, data) + v(0.75em)
     )
-  } else {""}
+  
+  }
 
-  name + role + line_1 + line_2
+  let pdf_line_1 = block(
+    width: width - conf.page.margins.right,
+    line_1.pdf
+  )
+
+  let pdf_line_2 = {
+    if line_2.len() > 0 {
+      block(
+        width: width - conf.page.margins.right,
+        v(0.5em) + line_2.pdf
+      )
+    } else {
+      ""
+    }
+  }
+
+  let build-ats-text(s) = {
+    let _text = ""
+    let _width = page.width - conf.page.margins.right - conf.page.margins.left
+
+    let _measure(body) = {
+      let size = measure(body)
+      size.width
+    }
+
+    for i in s.split(";") {
+      if i == "" { continue }
+      let _add_text = {
+        if i == s.split(";").at(-2) {
+           ats-text-maker(i)
+        } else {
+           ats-text-maker(i + "; ")
+        }
+      }
+      if _measure(_text + _add_text) > _width {
+        _text += linebreak() + _add_text
+      } else {
+        _text += _add_text
+      }
+    }
+    _text
+  }
+
+  let ats-text = build-ats-text(
+    "Name: " + data.name + ";" + "Location: " + data.location + ";" 
+    + line_1.ats
+    + if line_2 != none and line_2.ats.len() > 0 { line_2.ats } else { "" }
+  )
+
+  let ats = block(
+    width: page.width - conf.page.margins.right - conf.page.margins.left,
+    height: 0pt,
+    v(0.6em) + ats-text + v(0.6em)
+  )
+
+  name + role + pdf_line_1 + pdf_line_2 + ats
 }
