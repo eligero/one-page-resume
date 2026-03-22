@@ -23,6 +23,11 @@
 }
 
 #let bar-percent-list(conf, data) = {
+  set par(
+    spacing: 0.5em,
+    leading: 0em,
+  )
+
   for i in data.list {
     let tag = if i.percent >= 81 {
       data.ranges.last()
@@ -63,8 +68,6 @@
         )
       ) + box(bar-percent(i.percent, conf.colors))
     )
-      
-    if i !=data.list.first() { v(.5em) }
 
     block(
       box(width: 1fr, _head)
