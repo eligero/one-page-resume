@@ -1,4 +1,8 @@
 #let simple(conf, data) = {
+  set par(
+    spacing: 0em,
+    leading: 0.5em,
+  )
 
   if data.text.len() == 0 {
     data.text = lorem(20)
