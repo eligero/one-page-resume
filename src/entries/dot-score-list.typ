@@ -17,6 +17,10 @@
 }
 
 #let dot-score-list(conf, data) = {
+  set par(
+    spacing: 0.5em,
+    leading: 0em,
+  )
 
   let _data = (
     head: (
@@ -104,8 +108,7 @@
 
   for i in range(_data.head.data.len()) {
     block(
-      if i != 0 { v(0.5em) }
-      + box(width: head-width, _data.head.data.at(i))
+      box(width: head-width, _data.head.data.at(i))
       + h(0.75em)
       + box(width: alt-width, _data.alt.data.at(i))
       + if not data.hide-alt {h(0.75em)}
