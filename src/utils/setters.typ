@@ -84,7 +84,7 @@
 #let setters(configuration, data, doc, debug: false) = {
   set document(..(get-document-conf(data)))
   set page(..(get-page-conf(configuration, data)))
-  set par(spacing: 0pt, justify: true)
+  set par(spacing: 0pt, leading: 0pt, justify: true)
   set text(lang: configuration.page.language, hyphenate: false)
   
   set grid(stroke: if debug {2pt + yellow} else {none})
