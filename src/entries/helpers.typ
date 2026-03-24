@@ -83,17 +83,27 @@
 }
 
 #let type-tag(tag, size) = {
+
+  let _measure(body) = {
+    let size = measure(body)
+    (width: size.width , height: size.height)
+  }
+  
+  let _h = (
+    _measure(text(bottom-edge: "bounds",size: size, raw("q"))).height
+    - _measure(text(bottom-edge: "baseline", raw("q"))).height
+  )
+
   box(
-    fill: luma(240).transparentize(50%),
-    inset: (x: 0.25em, y: 0.05em),
-    outset: (y: 0.2em),
-    radius: 25%,
-    baseline: 25%,
+    fill: luma(230).transparentize(50%),
+    inset: 0pt,
+    outset: (y: _h, x: _h),
+    radius: 30%,
     text(
       weight: "regular",
-      size: size,
+      size: size - _h,
       fill: luma(100),
-      raw(tag)
+      raw(block: false, tag)
     )
   )
 }
