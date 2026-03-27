@@ -1,5 +1,6 @@
 #import "./helpers.typ": icon-parser, type-tag
 
+
 #let display-dates(date-start, date-end, format) = {
   let _format = {
     if format == "FULL"{
@@ -24,319 +25,273 @@
   }
 }
 
-#let columns-width(data) = {
-  let columns = (lwing: false, main: 100%, rwing: false)
-  let widths = (
-    lwing: 1.875em, // icon
-    main: 0pt, // dynamic
-    rwing: (title: 0pt, dates: 0pt, error: 0.25em)
+#let ats-text(s, _size, _font, _repeat) = {
+  text(
+    size: _size,
+    font: _font,
+    fill:black.transparentize(100%),
+    if _repeat {repeat(justify: false, s)} else {s}
   )
-  let is_icon = data.list.all(it => it.icon.len() > 0)
-  let is_date = (
-    format: not data.date-format == false,
-    start: data.list.all(
-      it => it.keys().contains("date-start") and it.date-start != false
-    ),
-    end: data.list.all(
-      it => it.keys().contains("date-end") and it.date-end != false
-    ),
-    end-str-any: data.list.any(
-      it => it.keys().contains("date-end") and type(it.date-end) == str
-    ),
-    end-str-all: data.list.all(
-      it => it.keys().contains("date-end") and type(it.date-end) == str
-    )
-  )
-  let is_title-right = data.list.all(
-    it => it.keys().contains("title-right") and it.title-right.len() > 0
-  )
-  
-
-  if is_icon {
-    columns.lwing = widths.lwing
-    columns.main -= widths.lwing
-  }
-
-  if is_title-right {
-    widths.rwing.title = calc.max(..(
-      data.list.map(d => measure(eval(d.title-right, mode: "markup")).width)
-    ))
-  }
-
-  if is_date.format {
-    let _date-text = ""
-    if is_date.start and is_date.end {
-      if is_date.end-str-any {
-        _date-text = data.list.map(
-          d => if type(d.date-end) == str {d.date-end} else {""}
-        ).sorted(key: s => s.len()).last()
-      }
-      if is_date.end-str-all {
-        widths.rwing.dates = measure(display-dates(
-          datetime(day: 1, month: 3, year: 2026),
-          _date-text,
-          data.date-format
-        )).width
-      } else {
-        widths.rwing.dates = calc.max(
-          measure(display-dates(
-            datetime(day: 1, month: 3, year: 2026),
-            datetime(day: 1, month: 3, year: 2026),
-            data.date-format
-          )).width,
-          measure(display-dates(
-            datetime(day: 1, month: 3, year: 2026),
-            _date-text,
-            data.date-format
-          )).width
-        )
-      }
-    } else {
-      widths.rwing.dates = measure(display-dates(
-        false,
-        datetime(day: 1, month: 3, year: 2026),
-        data.date-format
-      )).width
-    }
-  }
-
-  if is_title-right or is_date.format {
-    columns.rwing = calc.max(
-      widths.rwing.title, widths.rwing.dates
-    ) + widths.rwing.error
-    columns.main -= columns.rwing
-  }
-  
-  return columns.values().filter(v => v != false)
 }
 
-#let make-content(conf, data, columns, date-format, extension: false, more: false) = {
-  let ncols = columns.len()
-  let content = ()
+#let ats-gaps(_width, _size, _font) = {
+  box(
+    width: _width,
+    ats-text(".", _size, _font, true)
+  )
+}
+
+#let links-width(s, conf) = {
+   measure(s).width + if s != none {
+      let _pad = 0pt
+      let _wlink = conf.text.body-size/3 + measure(h(0.1em)).width
+      if s.child.func() == link {
+        _pad += _wlink
+      } else if s.child.has("children") {
+        for i in s.child.children {
+          if i.func() == link {
+            _pad += _wlink
+          }
+        }
+      }
+      _pad
+    } else {0pt}
+}
+
+#let make-content(conf, data, date-format, paragraph, extension: false) = { 
   let parameters = (
     icon: (
       width: 1.875em,
-      inset: 0pt,
       size: 150% * conf.text.body-size,
       background-color: none,
-      inline: false
-    ),
-    title: (top: 0.25em, bottom: 0.25em, left: 0.5em, right: 0pt),
-    subtitle: (top: 0.25em, bottom: 0.25em, left: 0.5em, right: 0pt),
-    description: (
-      left: (icon: 0.25em, default: 1em),
-      top: 0.4em,
-      bottom: (default: 0pt, more: 0.6em)
-    ),
-    tags: (
-      left: (icon: 0.25em, default: 1em),
-      top: 0.4em + 0.2em,
-      bottom: (default: 0.2em, more: 0.6em + 0.2em)
-    ),    
+      inline: false,
+      padding: 0.5em
+    )
   )
-  
-  /* *** LOGIC *** */
-  let is_icon = not extension and data.keys().contains("icon") and ((type(data.icon) == str and data.icon.len() > 0) or (type(data.icon) == dictionary and data.icon.icon.len() > 0))
-  let is_title-right = data.keys().contains("title-right") and data.title-right.len() > 0
+
+
+  let is_icon = (
+    data.keys().contains("icon") and (
+      (type(data.icon) == str and data.icon.len() > 0) or
+      (type(data.icon) == dictionary and data.icon.icon.len() > 0
+    )))
+  let is_subtitle-right = data.keys().contains(
+    "subtitle-right") and data.subtitle-right.len() > 0
   let is_dates = data.date-start != false or data.date-end != false
-  let is_description = data.keys().contains("description") and data.description.len() > 0
+  let is_description = data.keys().contains(
+    "description") and data.description.len() > 0
   let is_tags = data.keys().contains("tags") and data.tags.len() > 0
 
-  /* *** ICON *** */
-  if is_icon {
-    content.push(table.cell(
-        icon-parser(
-          data.icon.icon,
-          parameters.icon.size,
-          fill-color: if data.icon.color != false {rgb(data.icon.color)} else {false},//parameters.icon.color,
-          inline: parameters.icon.inline
-      ),
-      x: 0,
-      rowspan: 2,
-      inset: parameters.icon.inset,
-      align: horizon + center,
-    ))
-  }
 
-  /* *** TITLE *** */
-  if not extension {
-    content.push(table.cell(
-      text(
-        font: conf.text.font,
-        size: conf.text.body-size,
-        weight: "bold",
-        fill: conf.colors.accent,
-        eval(data.title, mode: "markup")
-      ),
-      x: if data.icon.len() > 0 { 1 } else { 0 },
-      inset: (
-        top: parameters.title.top,
-        bottom: parameters.title.bottom, 
-        left: if is_icon { parameters.title.left } else { 0pt },
-        right: parameters.title.right
-      )
-    ))
-  }
-
-  /* *** SUB-TITLE *** */
-  content.push(table.cell(
+  let _dates = if not is_dates {none} else {
     text(
       font: conf.text.font,
       size: conf.text.body-size,
+      weight: "regular",
+      style: "italic",
+      fill: conf.colors.accent,
+      display-dates(data.date-start, data.date-end, date-format)
+    )
+  }
+
+  let _subtitle-right = if not is_subtitle-right{none} else {
+    text(
+      font: conf.text.font,
+      size: conf.text.body-size,
+      weight: "regular",
+      style: "italic",
+      fill: if is_dates{conf.colors.dark} else {conf.colors.accent},
+      eval(data.subtitle-right, mode: "markup")
+    )
+  }
+
+  let gap-width = (
+    icon: if is_icon { 
+      parameters.icon.width + parameters.icon.padding } else {0pt},
+    subtitle-right: links-width(_subtitle-right, conf),
+    dates: measure(_dates).width
+  )
+  
+  let title-line = if extension {none} else{
+    let _text = text(
+      font: conf.text.font,
+      size: conf.text.body-size,
+      weight: "bold",
+      fill: conf.colors.accent,
+      eval(data.title, mode: "markup")
+    )
+  
+    _text + if is_dates {
+      ats-gaps(
+        100% - links-width(_text, conf) - gap-width.icon - gap-width.dates,
+        conf.text.body-size,
+        conf.text.font
+      ) + _dates
+    } else if is_subtitle-right {
+      ats-gaps(
+        100% - links-width(
+          _text, conf) - gap-width.icon - gap-width.subtitle-right,
+        conf.text.body-size,
+        conf.text.font
+      ) + _subtitle-right
+    } else {
+      none
+    } + linebreak()
+  }
+
+  let subtitle-line = {
+    let _text = text(
+      font: conf.text.font,
+      size: conf.text.body-size,
       weight: if extension {"bold"} else {"regular"},
+      style: if extension {"normal"} else {"italic"},
       fill: if extension {conf.colors.accent} else {conf.colors.dark},
       data.subtitle
-    ),
-    x: if is_icon { 1 } else { 0 },
-    colspan: if extension and ncols == 3 { 2 } else { 1 },
-    inset: (
-      top: parameters.subtitle.top,
-      bottom: parameters.subtitle.bottom,
-      left: if extension and ncols == 3 {
-        parameters.subtitle.left + parameters.icon.width
-        } else if is_icon {
-          parameters.subtitle.left
-        } else {0pt},
-      right: parameters.subtitle.right
     )
-  ))
-
-  /* *** TITLE RIGHT *** */
-  if is_title-right {
-    content.push(table.cell(
-      text(
-        font: conf.text.font,
-        size: conf.text.body-size,
-        weight: "regular",
-        fill: conf.colors.accent,
-        eval(data.title-right, mode: "markup")
-      ),
-      x: if is_icon { 2 } else { 1 },
-      rowspan: if is_dates { 1 } else { 2 },
-      align: right + horizon
-    ))
+    if extension and is_icon {
+      box(
+        clip: true,
+        width: parameters.icon.width,
+        height: 1em/2,
+        align(
+          horizon + center,
+          circle(radius: 1em/4, fill: conf.colors.accent.transparentize(75%))
+        )
+      ) + h(parameters.icon.padding)
+    } +_text + if extension and is_dates {
+      ats-gaps(
+        100% - measure(_text).width - gap-width.icon - gap-width.dates,
+        conf.text.body-size,
+        conf.text.font
+      ) + _dates
+    } else if is_subtitle-right and is_dates{
+      ats-gaps(
+        100% - measure(_text).width - gap-width.icon - gap-width.subtitle-right,
+        conf.text.body-size,
+        conf.text.font
+      ) + _subtitle-right
+    } else {
+      none
+    }
   }
 
-  /* *** DATES *** */
-  if is_dates{
-    content.push(table.cell(
-      text(
-        font: conf.text.font,
-        size: conf.text.body-size,
-        weight: "regular",
-        fill: conf.colors.dark,
-        display-dates(data.date-start, data.date-end, date-format)
-      ),
-      x: 1 + int((not extension and is_icon) or (extension and ncols == 3)),
-      rowspan: 1 + int(not((not extension and is_title-right) or extension)),
-      align: right + horizon
-    ))
-  }
-  
-  /* *** DESCRIPTION *** */
+  par(
+    if not extension and is_icon {
+      box(
+        width: parameters.icon.width,
+        height: parameters.icon.width,
+        icon-parser(
+          data.icon.icon,
+          parameters.icon.size,
+          fill-color: if data.icon.color != false {
+            rgb(data.icon.color)} else {false},
+          inline: parameters.icon.inline
+        )
+      ) + h(parameters.icon.padding) + box(
+        title-line + subtitle-line
+      )
+    } else {
+      title-line + subtitle-line
+    }
+  )
+
   if is_description {
-    content.push(table.cell(
-      text(
-        font: conf.text.font,
-        size: conf.text.body-size,
-        fill: conf.colors.dark,
-        eval(data.description, mode: "markup")
-      ),
-      colspan: ncols,
-      inset: (
-        top: parameters.description.top,
-        bottom: if more and not is_tags {parameters.description.bottom.more} else {parameters.description.bottom.default},
-        left: if extension and ncols == 3 or is_icon{
-          parameters.description.left.icon + parameters.icon.width
-        } else {parameters.description.left.default},
-        right: if is_title-right or is_dates{
-          if columns.last().abs < 40pt { columns.last()} else {columns.last()/2}
-        } else {0pt},
+    let _text = text(
+      font: conf.text.font,
+      size: conf.text.body-size,
+      fill: conf.colors.dark,
+      eval(data.description, mode: "markup")
+    )
+
+    par(
+      box(inset: (
+        left: parameters.icon.width + parameters.icon.padding,
+        right: parameters.icon.width + parameters.icon.padding,
+        top: 0em,
+        bottom: 0em),
+        outset: (
+          left: -parameters.icon.width/2,
+          bottom: if is_tags {paragraph.spacing} else {0pt}
+        ),
+        stroke: (left:1pt + conf.colors.accent.transparentize(75%)),
+        _text
       )
-    ))
-  }
-  
-  /* *** TAGS *** */
-  if is_tags {
-    content.push(table.cell(
-      align: left,
-      colspan: ncols,
-      inset: (
-        top: parameters.tags.top,
-        bottom: if more {parameters.tags.bottom.more} else {parameters.tags.bottom.default},
-        left: if extension and ncols == 3 or is_icon{
-          parameters.tags.left.icon + parameters.icon.width
-        } else {parameters.tags.left.default},
-        right: if is_title-right or is_dates{columns.last()/2} else {0pt},
-      ),
-      par(leading: 0.5em, spacing: 0em,
-        for i in data.tags.split(",") {
-          type-tag(
-            i.trim(),
-            conf.text.body-size,
-          ) + h(0.33em)
-        }
-      )
-    ))
+    )
   }
 
-  content
+  if is_tags {
+    let _text = data.tags.split(",").map(j => type-tag(
+      j.trim(), conf.text.body-size)).join(
+      ats-text(", " + h(0.25em), conf.text.body-size, conf.text.font, false)
+    )
+
+    par(
+      box(inset: (
+        left: parameters.icon.width + parameters.icon.padding,
+        right: parameters.icon.width + parameters.icon.padding,
+        top: 0em,
+        bottom: 0em),
+        outset: (left: -parameters.icon.width/2),
+        stroke: (left:1pt + conf.colors.accent.transparentize(75%)),
+        _text
+      )
+    )
+  }
 }
 
-#let dynamic-columns(conf, data) = context {
-  show link: set text(fill: conf.colors.accent)
-  set par(leading: 0.33em)
-  
-  let columns = columns-width(data)
-  
-  for i in data.list {
-    table(
-      inset: 0pt,
-      columns: columns,
-      ..{
-        let more = i.keys().contains("extension") and i.extension.len() > 0
-        let main = make-content(
-          conf, i, columns, data.date-format,
-          extension: false,
-          more: more
-        )
-
-        let extension = ()
-        if more {
-          for j in i.extension {
-            extension.push(make-content(
-              conf, j, columns, data.date-format,
-              extension: true,
-              more: if j == i.extension.last() {false} else {true}
-            ))
-          }
-        }
-
-        main + extension.flatten()
-      }        
+#let dynamic-columns(conf, data) = {
+  let paragraph = (
+      leading: 0.5em,
+      spacing: 0.75em,
+      justify: true,
+      linebreaks: "optimized",
     )
-    if i != data.list.last() { v(0.6em) }
-/*
-    let thing(body) = context {
-      let size = measure(body)
-      [Width = #size.width \ Height = #size.height]
-    }
-    "sicon = " + thing(icon-parser(
-      "si-laragon",
-      size: 150% * conf.text.body-size,
-      color: conf.colors.dark,
-      inline: false
-    )) 
-    [\ ]
-    "fa-aws = " + thing(box(inset: 0pt, icon-parser(
-      "fa-aws",
-      size: 150% * conf.text.body-size,
-      color: conf.colors.dark
-    ))) 
 
-    [\ ]
-    [#context [#(2em).to-absolute()]]
-*/
+  set par(
+    leading: paragraph.leading,
+    spacing: paragraph.spacing,
+    justify: paragraph.justify,
+    linebreaks: paragraph.linebreaks
+  )
 
+  show link: it => {
+    let _w=conf.text.body-size/3
+    let _h=conf.text.body-size/3
+    
+    it + h(0.1em) + box(
+      height: paragraph.leading,
+      width: conf.text.body-size/3,
+      curve(
+        stroke: 0.5pt + conf.colors.accent,
+        curve.line((_w/3, 0pt)),
+        curve.line((0pt, 0pt)),
+        curve.line((0pt, _h)),
+        curve.line((_w, _h)),
+        curve.line((_w, _h - _h/3)),
+        curve.move((_w, 0pt), relative: false),
+        curve.line((_w - _w/3, 0pt)),
+        curve.line((_w, 0pt)),
+        curve.line((_w, _h/3)),
+        curve.move((_w/2, _h/2), relative: false),
+        curve.line((_w, 0pt)),
+      ) 
+    )
+  }
+
+  for i in data.list {
+    make-content(
+      conf, i, data.date-format, paragraph,
+      extension: false,
+    )
+    
+    if i.keys().contains("extension") and i.extension.len() > 0 {
+      for j in i.extension {
+        j.insert("icon",i.icon)
+        make-content(
+          conf, j, data.date-format, paragraph,
+          extension: true,
+        )
+      }
+    }     
   }
 }
