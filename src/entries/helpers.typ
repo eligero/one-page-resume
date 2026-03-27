@@ -50,7 +50,7 @@
       width: size,
     )
   } else {
-    return box(clip: true, radius: 25%, image("/" + path, width: size))
+    return image("/" + path, width: size)
   }
 }
 
@@ -69,10 +69,11 @@
     if inline {
       return fa-icon(_icon, size: sizes.fa, fill: fill-color)
     } else {
-      return text(
-        fa-icon(_icon, size: sizes.fa, fill: fill-color),
-        bottom-edge: -25% * size
-      )
+      //return text(
+      //  fa-icon(_icon, size: sizes.fa, fill: fill-color),
+      //  bottom-edge: -25% * size
+      //)
+      return fa-icon(_icon, size: sizes.fa, fill: fill-color)
     }
   } else if prefix == "si-" {
     return sicon(slug: _icon, size: sizes.si, icon-color: fill-color.to-hex())
