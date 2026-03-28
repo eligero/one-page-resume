@@ -1,4 +1,4 @@
-#import "./helpers.typ": icon-parser
+#import "./helpers.typ": icon-parser, ats-gaps, ats-text
 
 #let _name(conf, data) = {
   let name_array = data.name.split()
@@ -117,30 +117,22 @@
     if i != data.at(line).last() {
       _line.pdf += box(
         width: 0pt,
-        text(
+        ats-text(
           ", ",
-          size: conf.header.line-icons.size,
-          font: conf.header.line-icons.font,        
-          fill: white.transparentize(100%),
+          conf.header.line-icons.size,
+          conf.header.line-icons.font,
+          false
         )
-      ) + text(
-        size: conf.header.line-icons.size,
-        fill: conf.page.colors.dark,
-        font: conf.header.line-icons.font,
-        h(0.5em)
+      ) + ats-gaps(
+        0.75em,
+        conf.header.line-icons.size,
+        conf.header.line-icons.font
       )
     }
   }
 
   _line
 }
-
-#let ats-text-maker(s) = text(
-  fill: black.transparentize(100%),
-  size: 10pt,
-  font: "arial",
-  s
-)
 
 #let header(conf, data, width) = {
   set par(leading: 0em, spacing: 0em)
@@ -188,21 +180,16 @@
     let _text = ""
     let _width = page.width - conf.page.margins.right - conf.page.margins.left
 
-    let _measure(body) = {
-      let size = measure(body)
-      size.width
-    }
-
     for i in s.split(";") {
       if i == "" { continue }
       let _add_text = {
         if i == s.split(";").at(-2) {
-           ats-text-maker(i)
+           ats-text(i, 0.6pt, "arial", false)
         } else {
-           ats-text-maker(i + "; ")
+           ats-text(i + "; ", 0.6pt, "arial", false)
         }
       }
-      if _measure(_text + _add_text) > _width {
+      if measure(_text + _add_text).width > _width {
         _text += linebreak() + _add_text
       } else {
         _text += _add_text
@@ -223,5 +210,6 @@
     v(0.6em) + ats-text + v(0.6em)
   )
 
-  name + role + pdf_line_1 + pdf_line_2 + ats
+  name + ats + role + pdf_line_1 + pdf_line_2
+
 }
