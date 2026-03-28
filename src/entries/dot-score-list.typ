@@ -1,3 +1,5 @@
+#import "./helpers.typ": ats-gaps, ats-text
+
 #let dot-rating(rating, colors, max-rating: 5) = {
   let active-color = colors.accent
   let inactive-color = colors.light.darken(20%)
@@ -17,102 +19,88 @@
 }
 
 #let dot-score-list(conf, data) = {
+  let paragraph = (
+    leading: 0.5em,
+    spacing: 0.6em,
+    justify: true,
+    linebreaks: "optimized",
+  )
+
   set par(
-    spacing: 0.5em,
-    leading: 0em,
+    leading: paragraph.leading,
+    spacing: paragraph.spacing,
+    justify: paragraph.justify,
+    linebreaks: paragraph.linebreaks
   )
 
   let _data = (
-    head: (
-      data: (),
-      width: (),
-    ),
-    alt: (
-      data: (),
-      width: (),
-    ),
-    score: (),
+    head-width: (),
+    alt-width: (),
+    data: ()
   )
 
-  let _measure(body) = {
-    let size = measure(body)
-    size.width
-  }
 
   for i in data.list {
-    _data.head.data.push(text(
-      weight: "bold",
+    let _head = text(
+        weight: "bold",
+        size: conf.text.body-size,
+        font: conf.text.font,
+        fill: conf.colors.accent,
+        i.text
+    )
+
+    let _alt = text(
+      weight: "regular",
       size: conf.text.body-size,
       font: conf.text.font,
-      fill: conf.colors.accent,
-      i.text
-    ) + box(
-      width: 0pt,
-      text(
-        ":",
-        fill: white.transparentize(100%),
-        size: conf.text.body-size,
-        font: conf.text.font
-      )
-    ))
-
-    _data.head.width.push(
-      _measure(_data.head.data.last())
+      fill: conf.colors.dark,
+      i.alt
     )
-    
-    if not data.hide-alt {
-      _data.alt.data.push(
-        text(
-          weight: "regular",
-          size: conf.text.body-size,
-          font: conf.text.font,
-          fill: conf.colors.dark,
-          i.alt
-        ) + box(
-          width: 0pt,
-          text(
-            ", ",
-            fill: white.transparentize(100%),
-            size: conf.text.body-size,
-            font: conf.text.font
-          )
-        )
-      )
-      _data.alt.width.push(
-        _measure(_data.alt.data.last())
-      )
-    } else {
-      _data.alt.width.push(0pt)
-      _data.alt.data.push("")
-    }
-    
-    _data.score.push(
-      if data.hide-alt {
+
+    _data.head-width.push(
+      measure(_head).width
+    )
+
+    _data.alt-width.push(
+      if not data.hide-alt { measure(_alt).width } else { 0pt }
+    )
+
+    _data.data.push((
+      head: _head + box(
+        width: 0pt,
+        ats-text(":", conf.text.body-size, conf.text.font, false)
+      ),
+      alt: if not data.hide-alt { _alt } else {
         box(
           width: 0pt,
-          text(
-            i.alt + ", ",
-            fill: white.transparentize(100%),
-            size: conf.text.body-size,
-            font: conf.text.font
-          )
-        ) + box(dot-rating(i.rating, conf.colors))
-      } else {
-        box(dot-rating(i.rating, conf.colors))
-      }
-    )
+          ats-text(i.alt, conf.text.body-size, conf.text.font, false)
+        )
+      },
+      rating: i.rating
+    ))
   }
 
-  let head-width = calc.max(.._data.head.width)
-  let alt-width = calc.max(.._data.alt.width)
+  let head-width = calc.max(.._data.head-width)
+  let alt-width = calc.max(.._data.alt-width)
 
-  for i in range(_data.head.data.len()) {
-    block(
-      box(width: head-width, _data.head.data.at(i))
+  for i in _data.data {
+    par(
+      ats-gaps(
+        head-width - measure(i.head).width,
+        conf.text.body-size,
+        conf.text.font
+      )
+      + i.head
       + h(0.75em)
-      + box(width: alt-width, _data.alt.data.at(i))
-      + if not data.hide-alt {h(0.75em)}
-      + _data.score.at(i)
+      + i.alt
+      + if not data.hide-alt {
+        ats-gaps(
+          0.75em + alt-width - measure(i.alt).width,
+          conf.text.body-size,
+          conf.text.font
+        )
+      }
+      + box(dot-rating(i.rating, conf.colors))
     )
   }
 }
