@@ -95,5 +95,10 @@
     )
   )
 
+  if parsed-data.extended.len() > 1 {
+    pagebreak()
+    contents(parsed-conf, parsed-data.extended, content: "main-column")
+  }
+
   doc
 }

@@ -74,7 +74,7 @@
             }            
           }
         }
-      } else if type(v) == array and str(k) in ("accent-column", "main-column") {
+      } else if type(v) == array and str(k) in ("accent-column", "main-column", "extended") {
         for i in range(data.at(k).len()){
           if data.at(k).at(i).keys().contains("entry") == false or data.at(k).at(i).entry not in _entries.entries.keys() {
             continue
