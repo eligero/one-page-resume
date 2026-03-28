@@ -108,3 +108,19 @@
     )
   )
 }
+
+#let ats-text(s, _size, _font, _repeat) = {
+  text(
+    size: _size,
+    font: _font,
+    fill:black.transparentize(100%),
+    if _repeat {repeat(justify: false, s)} else {s}
+  )
+}
+
+#let ats-gaps(_width, _size, _font) = {
+  box(
+    width: _width,
+    ats-text(".", _size, _font, true)
+  )
+}
